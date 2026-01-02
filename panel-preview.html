@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>B2B Panel - Ürün Yönetimi (Preview)</title>
+    <style>
+:root{
+  --bg: #0b0d10;
+  --surface: #10141a;
+  --surface-2: #151b23;
+  --text: #f3f5f7;
+  --muted: rgba(243,245,247,.72);
+  --border: rgba(255,255,255,.08);
+  --shadow: 0 18px 50px rgba(0,0,0,.45);
+
+  /* Euromaster-benzeri sarı/siyah yaklaşımı */
+  --brand: #ffcc00;
+  --brand-2: #ffd633;
+  --brand-ink: #111111;
+  --danger: #ff4d4d;
+  --ok: #33d18a;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,204,0,.18), transparent 55%),
+    radial-gradient(1000px 520px at 85% 25%, rgba(255,214,51,.10), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+
+code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 18px;
+  background: rgba(11,13,16,.78);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand{display:flex; align-items:center; gap:12px}
+.brand__logo{
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.brand__logoWrap{
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  overflow:hidden;
+  flex: 0 0 auto;
+}
+.brand__logoWrap svg{width:100%; height:100%; display:block}
+.brand__name{font-weight:800; letter-spacing:.2px}
+.brand__tag{font-size:12px; color: var(--muted)}
+
+.topbar__right{display:flex; align-items:center; gap:10px}
+.pill{
+  padding:8px 10px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.04);
+  font-size: 13px;
+  color: var(--muted);
+}
+.pill strong{color: var(--text)}
+.pill--muted{display:none}
+
+.btn{
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding:10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover{background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14)}
+.btn:active{transform: translateY(1px)}
+.btn--primary{
+  background: linear-gradient(180deg, var(--brand-2), var(--brand));
+  color: var(--brand-ink);
+  border-color: rgba(0,0,0,.22);
+}
+.btn--primary:hover{filter: brightness(1.02)}
+.btn--secondary{
+  background: rgba(255,204,0,.12);
+  border-color: rgba(255,204,0,.32);
+}
+.btn--ghost{padding:8px; border-radius: 14px}
+
+.avatar{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,204,0,.12);
+  border:1px solid rgba(255,204,0,.32);
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns: minmax(0,1fr) 320px;
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.main{
+  display:flex;
+  flex-direction:column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.sidebar{
+  position: sticky;
+  top: 74px;
+  align-self: start;
+  height: calc(100dvh - 90px);
+  border-radius: var(--radius);
+  background: rgba(16,20,26,.72);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display:flex;
+  flex-direction:column;
+}
+.sidebar__header{
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,204,0,.12), rgba(255,204,0,0));
+}
+.sidebar__title{font-weight: 900; letter-spacing: .2px}
+.sidebar__hint{margin-top:4px; font-size:12px; color: var(--muted)}
+.sidebar__footer{
+  margin-top:auto;
+  padding: 12px 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.menu{padding: 10px; display:flex; flex-direction:column; gap: 8px; overflow:auto}
+.menu__item{
+  width:100%;
+  text-align:left;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+.menu__item:hover{background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14)}
+.menu__item[aria-current="true"]{
+  background: rgba(255,204,0,.14);
+  border-color: rgba(255,204,0,.36);
+}
+.menu__label{display:flex; align-items:center; gap:10px; font-weight: 800}
+.menu__dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: 0 0 0 4px rgba(255,204,0,.14);
+}
+.menu__count{
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(0,0,0,.18);
+}
+
+.hero{
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(900px 450px at 30% 30%, rgba(255,204,0,.16), transparent 55%),
+    radial-gradient(700px 380px at 90% 20%, rgba(255,214,51,.12), transparent 55%),
+    rgba(16,20,26,.72);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns: minmax(0,1fr) 260px;
+  gap: 8px;
+}
+.hero__content{padding: 18px 18px 16px}
+.hero__badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,204,0,.14);
+  border:1px solid rgba(255,204,0,.32);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 12px;
+}
+.hero__title{margin: 10px 0 6px; font-size: 24px; letter-spacing: .2px}
+.hero__subtitle{margin:0; color: var(--muted); line-height: 1.5}
+.hero__actions{margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap}
+.hero__media{position:relative; padding: 14px}
+.hero__card{
+  position:absolute;
+  right: 12px;
+  width: 230px;
+  border-radius: 16px;
+  border:1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  box-shadow: 0 12px 40px rgba(0,0,0,.45);
+}
+.hero__card--1{top: 18px; height: 140px}
+.hero__card--2{top: 118px; height: 120px; transform: rotate(-2.2deg)}
+.hero__card--1::before,
+.hero__card--2::before{
+  content:"";
+  position:absolute;
+  inset: 12px;
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(255,204,0,.35), rgba(255,204,0,.04)),
+    radial-gradient(220px 120px at 30% 30%, rgba(255,214,51,.25), transparent 55%);
+}
+
+.ads{
+  display:grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 12px;
+}
+.ad{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(16,20,26,.70);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  position: relative;
+  overflow:hidden;
+}
+.ad::after{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(340px 180px at 20% 35%, rgba(255,204,0,.16), transparent 60%),
+    radial-gradient(320px 180px at 85% 25%, rgba(255,214,51,.10), transparent 60%);
+  pointer-events:none;
+}
+.ad__title{font-weight: 900; letter-spacing:.2px}
+.ad__text{margin-top:6px; color: var(--muted)}
+.ad__cta{
+  margin-top: 12px;
+  display:inline-flex;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border:1px solid rgba(255,204,0,.34);
+  background: rgba(255,204,0,.12);
+  color: var(--text);
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+}
+.ad--wide{min-height: 112px}
+.ad--tall{min-height: 112px}
+
+.products{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(16,20,26,.72);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+.products__header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap:wrap;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.section-title{margin:0; font-size: 18px; font-weight: 900}
+.section-subtitle{margin:6px 0 0; color: var(--muted); font-size: 13px}
+.products__tools{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+
+.search{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  min-width: 280px;
+}
+.search__icon{opacity:.8}
+.search__input{
+  width: 100%;
+  border: none;
+  outline:none;
+  background: transparent;
+  color: var(--text);
+  font-weight: 650;
+}
+.search__input::placeholder{color: rgba(243,245,247,.45)}
+
+.select{
+  border-radius: 12px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+  padding: 10px 12px;
+  font-weight: 750;
+}
+
+.product-grid{
+  padding-top: 14px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.card{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height: 220px;
+}
+.card__media{
+  height: 92px;
+  background:
+    radial-gradient(260px 120px at 20% 20%, rgba(255,204,0,.20), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  border-bottom: 1px solid var(--border);
+}
+.card__body{padding: 12px}
+.card__title{font-weight: 950; letter-spacing: .2px}
+.card__meta{margin-top:6px; font-size: 12px; color: var(--muted); display:flex; gap: 8px; flex-wrap:wrap}
+.tag{
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,.18);
+}
+.tag--ok{border-color: rgba(51,209,138,.38); background: rgba(51,209,138,.12); color: rgba(243,245,247,.92)}
+.tag--low{border-color: rgba(255,77,77,.35); background: rgba(255,77,77,.12)}
+.card__footer{
+  margin-top:auto;
+  padding: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+}
+.price{font-weight: 950}
+.muted{color: var(--muted)}
+.mini-actions{display:flex; gap:8px}
+.btn--mini{padding: 8px 10px; border-radius: 12px; font-weight: 850}
+
+.note{
+  border-radius: 14px;
+  border:1px dashed rgba(255,204,0,.35);
+  background: rgba(255,204,0,.08);
+  padding: 10px 10px;
+}
+.note__title{font-weight: 900}
+.note__text{margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.45}
+
+@media (min-width: 860px){
+  .pill--muted{display:inline-flex}
+}
+
+@media (max-width: 1100px){
+  .layout{grid-template-columns: minmax(0,1fr) 300px}
+  .product-grid{grid-template-columns: repeat(2, minmax(0,1fr))}
+  .hero{grid-template-columns: minmax(0,1fr) 220px}
+  .ads{grid-template-columns: 1fr 1fr}
+  .ad--wide{grid-column: 1 / -1}
+}
+
+@media (max-width: 860px){
+  .layout{grid-template-columns: 1fr}
+  .sidebar{position:relative; top:0; height:auto}
+  .product-grid{grid-template-columns: 1fr}
+  .hero{grid-template-columns: 1fr}
+  .hero__media{display:none}
+  .search{min-width: 0; width: 100%}
+}
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand">
+          <div class="brand__logoWrap" aria-hidden="true">
+            <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="g" x1="28" y1="18" x2="100" y2="112" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFD633"/>
+                  <stop offset="1" stop-color="#FFCC00"/>
+                </linearGradient>
+              </defs>
+              <rect x="10" y="10" width="108" height="108" rx="26" fill="#111111"/>
+              <rect x="18" y="18" width="92" height="92" rx="22" fill="url(#g)" fill-opacity="0.95"/>
+              <path d="M41 71c0-17.12 13.88-31 31-31s31 13.88 31 31-13.88 31-31 31-31-13.88-31-31Z" fill="#111111" fill-opacity="0.92"/>
+              <path d="M56 71c0-8.84 7.16-16 16-16s16 7.16 16 16-7.16 16-16 16-16-7.16-16-16Z" fill="#FFCC00"/>
+              <path d="M30 38h22c4 0 7 3 7 7v0c0 4-3 7-7 7H30V38Z" fill="#111111" fill-opacity="0.9"/>
+              <path d="M76 83h22v14H76c-4 0-7-3-7-7v0c0-4 3-7 7-7Z" fill="#111111" fill-opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="brand__text">
+            <div class="brand__name">B2B Panel</div>
+            <div class="brand__tag">Ürün & Kampanya Yönetimi</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar__right">
+        <div class="pill pill--muted">Bayi: <strong>İstanbul / Merkez</strong></div>
+        <button class="btn btn--primary" type="button">Yeni Sipariş</button>
+        <button class="btn btn--ghost" type="button" aria-label="Kullanıcı menüsü">
+          <span class="avatar">CK</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <main class="main">
+        <section class="hero">
+          <div class="hero__content">
+            <div class="hero__badge">Kampanya</div>
+            <h1 class="hero__title">B2B avantajlarıyla hızlı teklif, hızlı teslimat</h1>
+            <p class="hero__subtitle">
+              Sağ menüden ürün grubu seçerek listeyi filtreleyebilirsiniz. Bu ekran bir UI taslağıdır;
+              ürünler mock veridir.
+            </p>
+            <div class="hero__actions">
+              <button class="btn btn--primary" type="button" id="btnViewAll">Tüm Ürünler</button>
+              <button class="btn btn--secondary" type="button">Kampanyaları Gör</button>
+            </div>
+          </div>
+          <div class="hero__media" aria-hidden="true">
+            <div class="hero__card hero__card--1"></div>
+            <div class="hero__card hero__card--2"></div>
+          </div>
+        </section>
+
+        <section class="ads" aria-label="Reklam alanı">
+          <article class="ad ad--wide">
+            <div class="ad__title">Haftanın Fırsatı</div>
+            <div class="ad__text">Seçili lastiklerde bayi özel iskonto</div>
+            <div class="ad__cta">Detay</div>
+          </article>
+          <article class="ad ad--tall">
+            <div class="ad__title">Servis Paketi</div>
+            <div class="ad__text">Yağ + filtre setleri</div>
+            <div class="ad__cta">Teklif Al</div>
+          </article>
+          <article class="ad ad--tall">
+            <div class="ad__title">Akü Kampanyası</div>
+            <div class="ad__text">Montaj dahil avantajlı fiyat</div>
+            <div class="ad__cta">İncele</div>
+          </article>
+        </section>
+
+        <section class="products">
+          <div class="products__header">
+            <div>
+              <h2 class="section-title" id="sectionTitle">Ürünler</h2>
+              <p class="section-subtitle" id="sectionSubtitle">Tüm ürün grupları</p>
+            </div>
+
+            <div class="products__tools">
+              <label class="search">
+                <span class="search__icon" aria-hidden="true">⌕</span>
+                <input id="searchInput" class="search__input" placeholder="Ürün ara (örn. 5W-30, 60Ah...)" />
+              </label>
+              <select id="sortSelect" class="select" aria-label="Sırala">
+                <option value="popularity">Popüler</option>
+                <option value="priceAsc">Fiyat (Artan)</option>
+                <option value="priceDesc">Fiyat (Azalan)</option>
+                <option value="stockDesc">Stok (Çoktan aza)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="product-grid" id="productGrid" aria-live="polite"></div>
+        </section>
+      </main>
+
+      <aside class="sidebar" aria-label="Ürün menüsü">
+        <div class="sidebar__header">
+          <div class="sidebar__title">Euromaster Ürünleri</div>
+          <div class="sidebar__hint">Gruplara göre filtrele</div>
+        </div>
+
+        <nav class="menu" id="categoryMenu">
+          <!-- JS ile doldurulacak -->
+        </nav>
+
+        <div class="sidebar__footer">
+          <div class="note">
+            <div class="note__title">Not</div>
+            <div class="note__text">
+              Bu tasarım Euromaster benzeri sarı/siyah tema hedefiyle hazırlandı. Gerçek logo/görselleri
+              telif izinlerinize göre değiştirebilirsiniz.
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+/* B2B Panel UI Mock (no backend dependency) */
+
+const CATEGORIES = [
+  { id: "all", label: "Tümü", dot: true },
+  { id: "euromaster-products", label: "Euromaster Ürünleri", dot: true },
+  { id: "fluids", label: "Sıvılar", dot: true },
+  { id: "engine-oil", label: "Madeni Yağ", dot: true },
+  { id: "tire", label: "Lastik", dot: true },
+  { id: "spare", label: "Yedek Parça", dot: true },
+  { id: "battery", label: "Akü", dot: true }
+];
+
+const PRODUCTS = [
+  {
+    id: "p1",
+    category: "engine-oil",
+    name: "Motor Yağı 5W-30 (4L)",
+    sku: "OIL-5W30-4L",
+    brand: "B2B",
+    stock: 24,
+    popularity: 93,
+    priceTry: 1290
+  },
+  {
+    id: "p2",
+    category: "engine-oil",
+    name: "Motor Yağı 5W-40 (4L)",
+    sku: "OIL-5W40-4L",
+    brand: "B2B",
+    stock: 8,
+    popularity: 80,
+    priceTry: 1190
+  },
+  {
+    id: "p3",
+    category: "fluids",
+    name: "Antifriz -40°C (3L)",
+    sku: "FLD-ANT-3L",
+    brand: "B2B",
+    stock: 14,
+    popularity: 76,
+    priceTry: 540
+  },
+  {
+    id: "p4",
+    category: "fluids",
+    name: "Fren Hidroliği DOT-4 (500ml)",
+    sku: "FLD-DOT4-500",
+    brand: "B2B",
+    stock: 5,
+    popularity: 68,
+    priceTry: 220
+  },
+  {
+    id: "p5",
+    category: "tire",
+    name: "205/55 R16 Yaz Lastiği",
+    sku: "TIR-2055516-SUM",
+    brand: "B2B",
+    stock: 42,
+    popularity: 98,
+    priceTry: 3150
+  },
+  {
+    id: "p6",
+    category: "tire",
+    name: "195/65 R15 Kış Lastiği",
+    sku: "TIR-1956515-WIN",
+    brand: "B2B",
+    stock: 11,
+    popularity: 85,
+    priceTry: 2890
+  },
+  {
+    id: "p7",
+    category: "spare",
+    name: "Yağ Filtresi (Universal)",
+    sku: "SPR-OIL-FLT",
+    brand: "B2B",
+    stock: 9,
+    popularity: 70,
+    priceTry: 190
+  },
+  {
+    id: "p8",
+    category: "spare",
+    name: "Hava Filtresi (Universal)",
+    sku: "SPR-AIR-FLT",
+    brand: "B2B",
+    stock: 3,
+    popularity: 60,
+    priceTry: 210
+  },
+  {
+    id: "p9",
+    category: "battery",
+    name: "Akü 60Ah Start-Stop",
+    sku: "BAT-60AH-SS",
+    brand: "B2B",
+    stock: 6,
+    popularity: 87,
+    priceTry: 2490
+  },
+  {
+    id: "p10",
+    category: "battery",
+    name: "Akü 72Ah",
+    sku: "BAT-72AH",
+    brand: "B2B",
+    stock: 2,
+    popularity: 74,
+    priceTry: 2750
+  },
+  {
+    id: "p11",
+    category: "euromaster-products",
+    name: "Servis Paketi: Yağ + Filtre Seti",
+    sku: "EM-PACK-OIL-FLT",
+    brand: "Euromaster",
+    stock: 18,
+    popularity: 90,
+    priceTry: 1490
+  },
+  {
+    id: "p12",
+    category: "euromaster-products",
+    name: "Kontrol Paketi: 10 Nokta",
+    sku: "EM-CHECK-10P",
+    brand: "Euromaster",
+    stock: 999,
+    popularity: 65,
+    priceTry: 0
+  }
+];
+
+const els = {
+  menu: document.getElementById("categoryMenu"),
+  grid: document.getElementById("productGrid"),
+  sectionTitle: document.getElementById("sectionTitle"),
+  sectionSubtitle: document.getElementById("sectionSubtitle"),
+  searchInput: document.getElementById("searchInput"),
+  sortSelect: document.getElementById("sortSelect"),
+  btnViewAll: document.getElementById("btnViewAll")
+};
+
+let state = {
+  activeCategory: "all",
+  query: "",
+  sort: "popularity"
+};
+
+function formatTry(amount) {
+  if (amount === 0) return "Teklif";
+  return `${amount.toLocaleString("tr-TR")} ₺`;
+}
+
+function stockTag(stock) {
+  if (stock >= 10) return { text: `Stok: ${stock}`, className: "tag tag--ok" };
+  if (stock >= 1) return { text: `Stok: ${stock}`, className: "tag" };
+  return { text: "Stok yok", className: "tag tag--low" };
+}
+
+function categoryLabel(categoryId) {
+  return (CATEGORIES.find((c) => c.id === categoryId)?.label ?? "Ürünler");
+}
+
+function matches(product) {
+  const q = state.query.trim().toLowerCase();
+  const inCategory =
+    state.activeCategory === "all" ? true : product.category === state.activeCategory;
+  const inQuery =
+    q.length === 0
+      ? true
+      : `${product.name} ${product.sku} ${product.brand}`.toLowerCase().includes(q);
+  return inCategory && inQuery;
+}
+
+function sortProducts(items) {
+  const sorted = [...items];
+  switch (state.sort) {
+    case "priceAsc":
+      return sorted.sort((a, b) => (a.priceTry ?? 0) - (b.priceTry ?? 0));
+    case "priceDesc":
+      return sorted.sort((a, b) => (b.priceTry ?? 0) - (a.priceTry ?? 0));
+    case "stockDesc":
+      return sorted.sort((a, b) => (b.stock ?? 0) - (a.stock ?? 0));
+    case "popularity":
+    default:
+      return sorted.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+  }
+}
+
+function renderMenu() {
+  const counts = PRODUCTS.reduce((acc, p) => {
+    acc[p.category] = (acc[p.category] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  els.menu.innerHTML = "";
+  for (const c of CATEGORIES) {
+    const count = c.id === "all" ? PRODUCTS.length : (counts[c.id] ?? 0);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "menu__item";
+    btn.setAttribute("aria-current", c.id === state.activeCategory ? "true" : "false");
+    btn.addEventListener("click", () => {
+      state.activeCategory = c.id;
+      updateHeader();
+      renderMenu();
+      renderGrid();
+    });
+
+    const label = document.createElement("span");
+    label.className = "menu__label";
+    const dot = document.createElement("span");
+    dot.className = "menu__dot";
+    dot.setAttribute("aria-hidden", "true");
+    const text = document.createElement("span");
+    text.textContent = c.label;
+    label.appendChild(dot);
+    label.appendChild(text);
+
+    const badge = document.createElement("span");
+    badge.className = "menu__count";
+    badge.textContent = String(count);
+
+    btn.appendChild(label);
+    btn.appendChild(badge);
+    els.menu.appendChild(btn);
+  }
+}
+
+function updateHeader() {
+  const label = state.activeCategory === "all" ? "Ürünler" : categoryLabel(state.activeCategory);
+  const subtitle =
+    state.activeCategory === "all"
+      ? "Tüm ürün grupları"
+      : `Seçili grup: ${categoryLabel(state.activeCategory)}`;
+  els.sectionTitle.textContent = label;
+  els.sectionSubtitle.textContent = subtitle;
+}
+
+function renderGrid() {
+  const filtered = PRODUCTS.filter(matches);
+  const sorted = sortProducts(filtered);
+
+  els.grid.innerHTML = "";
+  if (sorted.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.textContent = "Sonuç bulunamadı. Farklı bir arama deneyin.";
+    els.grid.appendChild(empty);
+    return;
+  }
+
+  for (const p of sorted) {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const media = document.createElement("div");
+    media.className = "card__media";
+
+    const body = document.createElement("div");
+    body.className = "card__body";
+
+    const title = document.createElement("div");
+    title.className = "card__title";
+    title.textContent = p.name;
+
+    const meta = document.createElement("div");
+    meta.className = "card__meta";
+    const tSku = document.createElement("span");
+    tSku.className = "tag";
+    tSku.textContent = p.sku;
+    const tBrand = document.createElement("span");
+    tBrand.className = "tag";
+    tBrand.textContent = p.brand;
+    const tStock = document.createElement("span");
+    const st = stockTag(p.stock);
+    tStock.className = st.className;
+    tStock.textContent = st.text;
+
+    meta.appendChild(tSku);
+    meta.appendChild(tBrand);
+    meta.appendChild(tStock);
+
+    body.appendChild(title);
+    body.appendChild(meta);
+
+    const footer = document.createElement("div");
+    footer.className = "card__footer";
+
+    const price = document.createElement("div");
+    price.className = "price";
+    price.textContent = formatTry(p.priceTry);
+
+    const actions = document.createElement("div");
+    actions.className = "mini-actions";
+    const btnDetail = document.createElement("button");
+    btnDetail.type = "button";
+    btnDetail.className = "btn btn--mini";
+    btnDetail.textContent = "Detay";
+    btnDetail.addEventListener("click", () => {
+      alert(`${p.name}\nSKU: ${p.sku}\nGrup: ${categoryLabel(p.category)}`);
+    });
+    const btnAdd = document.createElement("button");
+    btnAdd.type = "button";
+    btnAdd.className = "btn btn--primary btn--mini";
+    btnAdd.textContent = p.priceTry === 0 ? "Teklif İste" : "Sepete Ekle";
+    btnAdd.addEventListener("click", () => {
+      alert(`İşlem: ${btnAdd.textContent}\nÜrün: ${p.name}`);
+    });
+    actions.appendChild(btnDetail);
+    actions.appendChild(btnAdd);
+
+    footer.appendChild(price);
+    footer.appendChild(actions);
+
+    card.appendChild(media);
+    card.appendChild(body);
+    card.appendChild(footer);
+    els.grid.appendChild(card);
+  }
+}
+
+function wireEvents() {
+  els.searchInput.addEventListener("input", (e) => {
+    state.query = e.target.value ?? "";
+    renderGrid();
+  });
+
+  els.sortSelect.addEventListener("change", (e) => {
+    state.sort = e.target.value;
+    renderGrid();
+  });
+
+  els.btnViewAll.addEventListener("click", () => {
+    state.activeCategory = "all";
+    state.query = "";
+    els.searchInput.value = "";
+    updateHeader();
+    renderMenu();
+    renderGrid();
+  });
+}
+
+function init() {
+  updateHeader();
+  renderMenu();
+  renderGrid();
+  wireEvents();
+}
+
+init();
+    </script>
+  </body>
+</html>
+
