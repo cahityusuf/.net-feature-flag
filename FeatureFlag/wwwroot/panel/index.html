@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>B2B Panel - Ürün Yönetimi</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand">
+          <img class="brand__logo" src="./assets/brand-logo.svg" alt="Marka Logo" />
+          <div class="brand__text">
+            <div class="brand__name">B2B Panel</div>
+            <div class="brand__tag">Ürün & Kampanya Yönetimi</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar__right">
+        <div class="pill pill--muted">Bayi: <strong>İstanbul / Merkez</strong></div>
+        <button class="btn btn--primary" type="button">Yeni Sipariş</button>
+        <button class="btn btn--ghost" type="button" aria-label="Kullanıcı menüsü">
+          <span class="avatar">CK</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <main class="main">
+        <section class="hero">
+          <div class="hero__content">
+            <div class="hero__badge">Kampanya</div>
+            <h1 class="hero__title">B2B avantajlarıyla hızlı teklif, hızlı teslimat</h1>
+            <p class="hero__subtitle">
+              Sağ menüden ürün grubu seçerek listeyi filtreleyebilirsiniz. Bu ekran bir UI taslağıdır;
+              ürünler mock veridir.
+            </p>
+            <div class="hero__actions">
+              <button class="btn btn--primary" type="button" id="btnViewAll">Tüm Ürünler</button>
+              <button class="btn btn--secondary" type="button">Kampanyaları Gör</button>
+            </div>
+          </div>
+          <div class="hero__media" aria-hidden="true">
+            <div class="hero__card hero__card--1"></div>
+            <div class="hero__card hero__card--2"></div>
+          </div>
+        </section>
+
+        <section class="ads" aria-label="Reklam alanı">
+          <article class="ad ad--wide">
+            <div class="ad__title">Haftanın Fırsatı</div>
+            <div class="ad__text">Seçili lastiklerde bayi özel iskonto</div>
+            <div class="ad__cta">Detay</div>
+          </article>
+          <article class="ad ad--tall">
+            <div class="ad__title">Servis Paketi</div>
+            <div class="ad__text">Yağ + filtre setleri</div>
+            <div class="ad__cta">Teklif Al</div>
+          </article>
+          <article class="ad ad--tall">
+            <div class="ad__title">Akü Kampanyası</div>
+            <div class="ad__text">Montaj dahil avantajlı fiyat</div>
+            <div class="ad__cta">İncele</div>
+          </article>
+        </section>
+
+        <section class="products">
+          <div class="products__header">
+            <div>
+              <h2 class="section-title" id="sectionTitle">Ürünler</h2>
+              <p class="section-subtitle" id="sectionSubtitle">Tüm ürün grupları</p>
+            </div>
+
+            <div class="products__tools">
+              <label class="search">
+                <span class="search__icon" aria-hidden="true">⌕</span>
+                <input id="searchInput" class="search__input" placeholder="Ürün ara (örn. 5W-30, 60Ah...)" />
+              </label>
+              <select id="sortSelect" class="select" aria-label="Sırala">
+                <option value="popularity">Popüler</option>
+                <option value="priceAsc">Fiyat (Artan)</option>
+                <option value="priceDesc">Fiyat (Azalan)</option>
+                <option value="stockDesc">Stok (Çoktan aza)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="product-grid" id="productGrid" aria-live="polite"></div>
+        </section>
+      </main>
+
+      <aside class="sidebar" aria-label="Ürün menüsü">
+        <div class="sidebar__header">
+          <div class="sidebar__title">Euromaster Ürünleri</div>
+          <div class="sidebar__hint">Gruplara göre filtrele</div>
+        </div>
+
+        <nav class="menu" id="categoryMenu">
+          <!-- JS ile doldurulacak -->
+        </nav>
+
+        <div class="sidebar__footer">
+          <div class="note">
+            <div class="note__title">Not</div>
+            <div class="note__text">
+              Bu tasarım Euromaster benzeri sarı/siyah tema hedefiyle hazırlandı. Gerçek logo/görselleri
+              telif izinlerinize göre <code>assets</code> altından değiştirebilirsiniz.
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
